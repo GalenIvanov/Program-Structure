@@ -11,9 +11,7 @@ arity: function [
 ][
     args: [opt string! [word! | lit-word! | get-word!] (n: n + 1) opt block! opt string!] 
     stop: [quote return: | quote /local | quote /extern | end]
-    
     fn: get either path? :f[f/1][f]
-
     refs: copy []
     if path? :f [
         foreach r next :f [
@@ -21,18 +19,14 @@ arity: function [
         ]
         take/last refs
     ]
-    
     n: 0
-    spec: copy spec-of :fn
-
-    parse spec [
-         any args  ; main func arity
+    parse spec-of :fn [
+        any args  ; main func arity
         any [ refs some args | skip ]  ; refinements args
         stop
     ]
     n
 ]
-
 
 {
 print arity 'bind
