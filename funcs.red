@@ -10,7 +10,6 @@ arity: function [
     f [word! any-block!]
 ][
     args: [opt string! [word! | lit-word! | get-word!] (n: n + 1) opt block! opt string!] 
-    stop: [quote return: | quote /local | quote /extern | end]
     fn: get either path? :f[f/1][f]
     refs: copy []
     if path? :f [
@@ -22,10 +21,21 @@ arity: function [
     n: 0
     parse spec-of :fn [
         any args  ; main func arity
-        any [ refs some args | skip ]  ; refinements args
-        stop
+        any [ refs any args | skip ]  ; refinements args
+		end
     ]
     n
+]
+
+range: func[
+    n
+	/from s
+][
+    start: either from [s][1]
+	while [start < n] [
+	    print start
+		start:  start + 1
+    ]
 ]
 
 extract-dummy-funcs: function [
@@ -35,6 +45,11 @@ extract-dummy-funcs: function [
     }
     src-block [block!] {a block containing loaded source}
 ][
+ 
+    ; Look inside blocks and contexts?
+	; functions assigned to words using `set` are "global" !!!
+	; otherwise (when assigned to a set-word!) I need to include the full path!
+
     f-map: copy #()
     rule: [(b: copy [])
             fn-name (append b to-set-word name)
@@ -57,10 +72,10 @@ src: [
 ]
 
 
-probe fns: extract-dummy-funcs src
+; probe fns: extract-dummy-funcs src
 
-
-{  ; TESTS
+{
+; TESTS
 print arity 'bind
 
 foreach fn [
