@@ -22,19 +22,19 @@ arity: function [
     parse spec-of :fn [
         any args  ; main func arity
         any [ refs any args | skip ]  ; refinements args
-		end
+        end
     ]
     n
 ]
 
 range: func[
     n
-	/from s
+    /from s
 ][
     start: either from [s][1]
-	while [start < n] [
-	    print start
-		start:  start + 1
+    while [start < n] [
+        print start
+        start:  start + 1
     ]
 ]
 
@@ -47,8 +47,8 @@ extract-dummy-funcs: function [
 ][
  
     ; Look inside blocks and contexts?
-	; functions assigned to words using `set` are "global" !!!
-	; otherwise (when assigned to a set-word!) I need to include the full path!
+    ; functions assigned to words using `set` are "global" !!!
+    ; otherwise (when assigned to a set-word!) I need to include the full path!
 
     f-map: copy #()
     rule: [(b: copy [])
