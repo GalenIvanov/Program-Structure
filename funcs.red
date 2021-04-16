@@ -41,27 +41,33 @@ range: func[
     ]
 ]
 
-extract-dummy-funcs: function [
+extract-funcs: function [
     {Identifies and extracts user-defined functions from a block into a map.
     Only [set-word!] and [qoute set any-word!] are recognized as function names.
     Only literal blocks are recognized as function specs.
     Only literal blocks are recognized as function bodies.
     }
     src-block [block!] {a block containing loaded source}
+    f-map     [map!]
 ][
  
     ; Look inside blocks and contexts?
     ; functions assigned to words using `set` are "global" !!!
     ; otherwise (when assigned to a set-word!) I need to include the full path!
 
-    f-map: copy #()
     rule: [(b: copy [])
             fn-name (append b to-set-word name)
             copy cons a-func (append b cons)
             copy t [block! opt block!](append b t)]
     fn-name: [set name set-word! | quote set set name any-word!]
     a-func: [quote func | quote function | quote has | quote does | quote make quote function!]
-    parse src-block [any [any [not rule skip] rule (put f-map name b)]]
+    parse src-block [
+        any [
+            any [bl: if (block? bl/1) (extend f-map extract-funcs bl/1 f-map) skip ; I need to include the path (for contexts!) 
+          | not rule skip]
+            rule (put f-map name b) 
+        ]
+    ]
     f-map
 ]
 
@@ -69,7 +75,7 @@ src: [
     a: 10
     b: "Some text"
     sq: function [x][x * x]
-    a-block: [y + z * (zz)]
+    a-block: [fn: func[y [string!]][reverse y ]]
     zz: 10
     set 'fyz func[y z][y * z ]
     len: make function! [[s][length? s]]
@@ -77,8 +83,7 @@ src: [
     {goodbye}
 ]
 
-
- probe fns: extract-dummy-funcs src
+probe fns: extract-funcs src copy #()
 
 {
 ; TESTS
