@@ -31,10 +31,10 @@ arity: function [
 range: func[
     n
     /from b
-	/step s
+    /step s
 ][
     start: either from [b][1]
-	inc: either step[s][1]
+    inc: either step[s][1]
     while [start < n] [
         print start
         start:  start + inc
@@ -45,6 +45,7 @@ extract-dummy-funcs: function [
     {Identifies and extracts user-defined functions from a block into a map.
     Only [set-word!] and [qoute set any-word!] are recognized as function names.
     Only literal blocks are recognized as function specs.
+    Only literal blocks are recognized as function bodies.
     }
     src-block [block!] {a block containing loaded source}
 ][
@@ -56,10 +57,10 @@ extract-dummy-funcs: function [
     f-map: copy #()
     rule: [(b: copy [])
             fn-name (append b to-set-word name)
-            set t a-func (append b t)
-            copy t block! (append b t append/only b [])]
+            copy cons a-func (append b cons)
+            copy t [block! opt block!](append b t)]
     fn-name: [set name set-word! | quote set set name any-word!]
-    a-func: [quote func | quote function | quote has]
+    a-func: [quote func | quote function | quote has | quote make quote function!]
     parse src-block [any [any [not rule skip] rule (put f-map name b)]]
     f-map
 ]
@@ -70,12 +71,13 @@ src: [
     sq: function [x][x * x]
     a-block: [y + z * (zz)]
     zz: 10
-    set 'inc func[y z] compose a-block
+    set 'fyz func[y z][y * z ]
+    len: make function! [[s][length? s]]
     {goodbye}
 ]
 
 
-; probe fns: extract-dummy-funcs src
+ probe fns: extract-dummy-funcs src
 
 {
 ; TESTS
