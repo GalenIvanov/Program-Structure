@@ -27,14 +27,17 @@ arity: function [
     n
 ]
 
+; a test function
 range: func[
     n
-    /from s
+    /from b
+	/step s
 ][
-    start: either from [s][1]
+    start: either from [b][1]
+	inc: either step[s][1]
     while [start < n] [
         print start
-        start:  start + 1
+        start:  start + inc
     ]
 ]
 
@@ -76,6 +79,9 @@ src: [
 
 {
 ; TESTS
+print arity 'range
+print arity 'range/from
+print arity 'range/from/step
 print arity 'bind
 
 foreach fn [
