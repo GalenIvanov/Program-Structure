@@ -60,7 +60,7 @@ extract-dummy-funcs: function [
             copy cons a-func (append b cons)
             copy t [block! opt block!](append b t)]
     fn-name: [set name set-word! | quote set set name any-word!]
-    a-func: [quote func | quote function | quote has | quote make quote function!]
+    a-func: [quote func | quote function | quote has | quote does | quote make quote function!]
     parse src-block [any [any [not rule skip] rule (put f-map name b)]]
     f-map
 ]
@@ -73,6 +73,7 @@ src: [
     zz: 10
     set 'fyz func[y z][y * z ]
     len: make function! [[s][length? s]]
+    rnd100: does[random 100]
     {goodbye}
 ]
 
